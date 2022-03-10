@@ -1,4 +1,4 @@
 helloworld:
-  deploymentName: helloworld-Deployment
+  deploymentName: helloworld-DeploymentV2
   podName: helloworld-Pod
   image: ray31245/mynodejs
