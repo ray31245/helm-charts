@@ -2,6 +2,13 @@ apiVersion: v1
 entries:
   helm-charts:
   - apiVersion: v1
+    created: "2022-03-11T07:59:55.587183307Z"
+    digest: 063833959562ee3b524f2b93b35621f07d576b840ae718a55d4c87a018e54d80
+    name: helm-charts
+    urls:
+    - https://github.com/ray31245/helm-charts/releases/download/helm-charts-0.0.8/helm-charts-0.0.8.tgz
+    version: 0.0.8
+  - apiVersion: v1
     created: "2022-03-11T03:11:27.224018667Z"
     digest: 9b2da14e220689627d831e9796d04a875ec11fa422ec874560edc177762879fb
     name: helm-charts
@@ -36,4 +43,4 @@ entries:
     urls:
     - https://github.com/ray31245/helm-charts/releases/download/helm-charts-0.0.3/helm-charts-0.0.3.tgz
     version: 0.0.3
-generated: "2022-03-11T03:11:27.224039967Z"
+generated: "2022-03-11T07:59:55.587220208Z"
