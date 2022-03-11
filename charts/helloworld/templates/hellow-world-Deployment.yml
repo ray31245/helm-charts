@@ -1,10 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: {{ .Values.helloworld.deploymentName }}
+  name: {{ .Values.helloworld.deploymentName }}
 spec:
-    template:
-        spec:
-            containers:
-                - name: {{ .Values.helloworld.podName }}
-                  image: {{ .Values.helloworld.image }}
+  selector:
+    matchLabels:
+      app: helloworld
+  template:
+    metadata:
+      labels:
+        app: helloworld
+    spec:
+      containers:
+        - name: {{ .Values.helloworld.podName }}
+          image: {{ .Values.helloworld.image }}
