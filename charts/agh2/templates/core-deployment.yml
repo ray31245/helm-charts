@@ -1,0 +1,101 @@
+{{- if .Values.core.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: core
+  labels:
+    project: agh
+spec:
+  selector:
+    matchLabels:
+      app: core
+  template:
+    metadata:
+      labels:
+        app: core
+    spec:
+      initContainers:
+        - name: core-init-redis
+          image: registry.lkc-lab.com/docker/library/redis:6-alpine
+          command:
+            [
+              "sh",
+              "-c",
+              "until redis-cli --no-auth-warning -h $REDIS_SERVICE_HOST -p $REDIS_SERVICE_PORT ping; do echo waiting for redis; sleep 1; done",
+            ]
+        - name: core-init-postgresql
+          image: postgres:13
+          env:
+            - name: PG_CONN_STR
+              valueFrom:
+                secretKeyRef:
+                  key: DB_CONN_STR
+                  name: core-db-secret
+          command:
+            [
+              "sh",
+              "-c",
+              "until pg_isready -d $PG_CONN_STR; do echo waiting for postgresql; sleep 1; done",
+            ]
+      containers:
+        - name: core
+          image: "{{ .Values.core.image.repository }}:{{ .Values.core.image.tag }}"
+          command: ["./core"]
+          env:
+            - name: DB_Conn
+              valueFrom:
+                secretKeyRef:
+                  key: "DB_CONN_STR"
+                  name: core-db-secret
+            - name: EXP_MGR_DB_Conn
+              valueFrom:
+                secretKeyRef:
+                  key: DB_CONN_STR
+                  name: expmgr-db-secret
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: ENV_REDIS_CONN
+              value: "redis://redis.$(NAMESPACE).svc.cluster.local"
+            - name: CORE_URL
+              value: "core.$(NAMESPACE).svc.cluster.local:50005"
+            - name: BLENDER_URL
+              value: "blender.$(NAMESPACE).svc.cluster.local:50005"
+            - name: MATCHER_URL
+              value: "matcher.$(NAMESPACE).svc.cluster.local:50005"
+            - name: TRANSFORMER_URL
+              value: "transformer.$(NAMESPACE).svc.cluster.local:50005"
+            - name: EXPLOITMGR_URL
+              value: "exploitmgr.$(NAMESPACE).svc.cluster.local:50005"
+            - name: MINIO_URL
+              valueFrom:
+                secretKeyRef:
+                  name: minio-secret
+                  key: url
+            - name: MINIO_USER
+              valueFrom:
+                secretKeyRef:
+                  name: core-minio-secret
+                  key: core-minio-user
+            - name: MINIO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: core-minio-secret
+                  key: core-minio-password
+            - name: REGISTRY_URL
+              value: {{ .Values.imageCredential.registry }}
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "500m"
+          ports:
+            - name: grpc
+              containerPort: 50005
+          imagePullPolicy: {{ .Values.core.image.pullPolicy }}
+      imagePullSecrets:
+        - name: gitlab-registry
+      restartPolicy: Always
+      automountServiceAccountToken: true
+      serviceAccountName: core-svc-account
+{{- end }}

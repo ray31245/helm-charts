@@ -1,0 +1,14 @@
+{{- if .Values.attack.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: attack
+  labels:
+    {{- include "AGH2-helm.labels" . | nindent 4 }}
+spec:
+  selector:
+    app: attack
+  ports:
+    - port: 8080
+      targetPort: 8080
+{{- end }}

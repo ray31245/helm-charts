@@ -1,0 +1,14 @@
+{{- if .Values.blender.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: blender
+  labels:
+    {{- include "AGH2-helm.labels" . | nindent 4 }}
+spec:
+  selector:
+    app: blender
+  ports:
+    - port: 50005
+      targetPort: 50005
+{{- end }}

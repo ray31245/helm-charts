@@ -1,0 +1,48 @@
+{{- if .Values.attack.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: attack
+  labels:
+    {{- include "AGH2-helm.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: attack
+  template:
+    metadata:
+      labels:
+        app: attack
+    spec:
+      initContainers:
+        - name: attack-init-redis
+          image: registry.lkc-lab.com/docker/library/redis:6-alpine
+          command:
+            [
+              "sh",
+              "-c",
+              "until redis-cli --no-auth-warning -h $REDIS_SERVICE_HOST -p $REDIS_SERVICE_PORT ping; do echo waiting for redis; sleep 1; done",
+            ]
+      containers:
+        - name: attack
+          image: "{{ .Values.attack.image.repository }}:{{ .Values.attack.image.tag }}"
+          env:
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: ENV_REDIS_CONN
+              value: "redis://redis.$(NAMESPACE).svc.cluster.local:6379/0"
+          command: ["./attack"]
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+          ports:
+            - name: http
+              containerPort: 8080
+          imagePullPolicy: {{ .Values.attack.image.pullPolicy }}
+      imagePullSecrets:
+        - name: gitlab-registry
+      restartPolicy: "Always"
+{{- end }}

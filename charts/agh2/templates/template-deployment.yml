@@ -1,0 +1,62 @@
+{{- if .Values.template.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: template
+  labels:
+    {{- include "AGH2-helm.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: template
+  template:
+    metadata:
+      labels:
+        app: template
+    spec:
+      initContainers:
+        - name: template-init-postgresql
+          image: postgres:13
+          env:
+            - name: PG_CONN_STR
+              valueFrom:
+                secretKeyRef:
+                  key: DB_CONN_STR
+                  name: template-db-secret
+          command:
+            [
+              "sh",
+              "-c",
+              "until pg_isready -d $PG_CONN_STR; do echo waiting for postgresql; sleep 1; done",
+            ]
+      containers:
+        - name: template
+          image: "{{ .Values.template.image.repository }}:{{ .Values.template.image.tag }}"
+          command:
+            - ./template
+          env:
+            - name: DB_Conn
+              valueFrom:
+                secretKeyRef:
+                  key: DB_CONN_STR
+                  name: template-db-secret
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: CORE_URL
+              value: "core.$(NAMESPACE).svc.cluster.local:50005"
+            - name: EXPLOITMGR_URL
+              value: "exploitmgr.$(NAMESPACE).svc.cluster.local:50005"
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+          ports:
+            - name: grpc
+              containerPort: 50005
+          imagePullPolicy: {{ .Values.template.image.pullPolicy }}
+      imagePullSecrets:
+        - name: gitlab-registry
+      restartPolicy: Always
+{{- end }}

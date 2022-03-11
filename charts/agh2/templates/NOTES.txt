@@ -1,0 +1,6 @@
+1. Get the application URL by running these commands:
+{{- if .Values.ingress.enabled }}
+{{- if .Values.ingress.host }}
+  http://{{ $.Values.ingress.host | default "app.argushack.com" }}
+{{- end }}
+{{- end }}

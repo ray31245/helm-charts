@@ -1,0 +1,20 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: ingress-captain
+spec:
+  routes:
+    - kind: Rule
+      match: {{ print "Host(`" (.Values.ingress.host | default "app.argushack.com") "`)" }}
+      services:
+        - kind: Service
+          name: frontend
+          port: 80
+    - kind: Rule
+      match: {{ print "PathPrefix(`/api`) && Host(`" (.Values.ingress.host | default "app.argushack.com") "`)" }}
+      services:
+        - kind: Service
+          name: captain
+          port: 9527
+{{- end }}

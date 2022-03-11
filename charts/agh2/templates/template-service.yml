@@ -1,0 +1,14 @@
+{{- if .Values.template.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: template
+  labels:
+    {{- include "AGH2-helm.labels" . | nindent 4 }}
+spec:
+  selector:
+    app: template
+  ports:
+    - port: 50005
+      targetPort: 50005
+{{- end }}

@@ -1,0 +1,14 @@
+{{- if .Values.matcher.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: matcher
+  labels:
+    {{- include "AGH2-helm.labels" . | nindent 4 }}
+spec:
+  selector:
+    app: matcher
+  ports:
+    - port: 50005
+      targetPort: 50005
+{{- end }}

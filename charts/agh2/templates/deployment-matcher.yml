@@ -1,0 +1,59 @@
+{{- if .Values.matcher.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: matcher
+  labels:
+    {{- include "AGH2-helm.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: matcher
+  template:
+    metadata:
+      labels:
+        app: matcher
+    spec:
+      initContainers:
+        - name: matcher-init-postgres
+          image: postgres:13
+          env:
+            - name: PG_CONN_STR
+              valueFrom:
+                secretKeyRef:
+                  key: DB_CONN_STR
+                  name: expmgr-db-secret
+          command:
+            [
+              "sh",
+              "-c",
+              "until pg_isready -d $PG_CONN_STR; do echo waiting for postgresql; sleep 1; done",
+            ]
+      containers:
+        - name: matcher
+          image: "{{ .Values.matcher.image.repository }}:{{ .Values.matcher.image.tag }}"
+          env:
+            - name: DB_Conn
+              valueFrom:
+                secretKeyRef:
+                  key: DB_CONN_STR
+                  name: expmgr-db-secret
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: CORE_URL
+              value: "core.$(NAMESPACE).svc.cluster.local:50005"
+          command: ["npm", "start"]
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "200m"
+          ports:
+            - name: grpc
+              containerPort: 50005
+          imagePullPolicy: {{ .Values.matcher.image.pullPolicy }}
+      imagePullSecrets:
+        - name: gitlab-registry
+      restartPolicy: "Always"
+{{- end }}

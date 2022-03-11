@@ -1,0 +1,119 @@
+# Default values for AGH2-helm.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+attack:
+  enabled: true
+  image:
+    repository: registry.lkc-lab.com/leukocyte-lab/argushack2/attack
+    tag: v0.2.0
+    pullPolicy: IfNotPresent
+
+blender:
+  enabled: true
+  image:
+    repository: registry.lkc-lab.com/leukocyte-lab/argushack2/blender
+    tag: v1.1.0
+    pullPolicy: IfNotPresent
+
+captain:
+  enabled: true
+  image:
+    repository: registry.lkc-lab.com/leukocyte-lab/argushack2/captain
+    tag: v0.14.0
+    pullPolicy: IfNotPresent
+  db:
+    # Replace the password & DB ip & port
+    name: capt-db
+    username: ""
+    password: ""
+    ip: 192.168.0.1
+    port: 5432
+  # `jwt-secret` is required, plz enter random string no less then 10 letters
+  jwtSecret: 
+  # `apiToken` & `accountID` is required, plz contact sales to get tokens
+  keygen:
+    apiToken:
+    accountID: 
+
+core:
+  enabled: true
+  image:
+    repository: registry.lkc-lab.com/leukocyte-lab/argushack2/core
+    tag: v1.11.0
+    pullPolicy: IfNotPresent
+  db:
+    # Replace the password & DB ip & port
+    name: core-db
+    username: agh
+    password: ""
+    ip: 192.168.0.1
+    port: 5432
+
+exploitmgr:
+  enabled: true
+  image:
+    repository: registry.lkc-lab.com/leukocyte-lab/argushack2/exploitmgr
+    tag: v0.6.1
+    pullPolicy: IfNotPresent
+  db:
+    # Replace the password & DB ip & port
+    name: expmgr-db
+    username: ""
+    password: ""
+    ip: 192.168.0.1
+    port: 5432
+
+frontend:
+  enabled: true
+  image:
+    repository: registry.lkc-lab.com/leukocyte-lab/argushack2/frontend
+    tag: "2.12.2"
+    pullPolicy: IfNotPresent
+
+matcher:
+  enabled: true
+  image:
+    repository: registry.lkc-lab.com/leukocyte-lab/argushack2/matcher
+    tag: v1.2.1
+    pullPolicy: IfNotPresent
+
+template:
+  enabled: true
+  image:
+    repository: registry.lkc-lab.com/leukocyte-lab/argushack2/template
+    tag: v0.2.4
+    pullPolicy: IfNotPresent
+  db:
+    # Replace the password & DB ip & port
+    name: template-db
+    username: ""
+    password: ""
+    ip: 192.168.0.1
+    port: 5432
+
+transformer:
+  enabled: true
+  image:
+    repository: registry.lkc-lab.com/leukocyte-lab/argushack2/transformer
+    tag: v1.1.0
+    pullPolicy: IfNotPresent
+
+minio:
+  url: ""
+  core:
+    user: ""
+    password: ""
+  capt:
+    user: ""
+    password: ""
+
+imageCredential:
+  # Fill the username & password for image pulling
+  registry: registry.lkc-lab.com
+  username: 
+  password: 
+
+ingress:
+  enabled: ture
+  host: "app.argushack.com" 

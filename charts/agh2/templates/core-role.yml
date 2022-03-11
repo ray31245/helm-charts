@@ -1,0 +1,18 @@
+{{- if .Values.core.enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: core-role
+  labels:
+    {{- include "AGH2-helm.labels" . | nindent 4 }}
+rules:
+  - apiGroups: [""] # "" indicates the core API group
+    resources: ["pods", "pods/log"]
+    verbs: ["get", "list", "read", "watch"]
+  - apiGroups: ["batch"]
+    resources: ["jobs"]
+    verbs: ["create", "patch", "replace", "delete", "list", "get", "watch"]
+  - apiGroups: ["batch"]
+    resources: ["cronjobs"]
+    verbs: ["create", "patch", "replace", "delete", "list", "get", "deletecollection"]
+{{- end }}
