@@ -1,5 +1,16 @@
 apiVersion: v1
 entries:
+  AGH2-helm:
+  - apiVersion: v2
+    appVersion: "220124"
+    created: "2022-03-11T09:20:12.923965895Z"
+    description: A Helm chart for Kubernetes
+    digest: b421a462ef2cdff45b744ed532bd6a6e5dfd1ba488a964604e75aeb7f8f17c2c
+    name: AGH2-helm
+    type: application
+    urls:
+    - https://github.com/ray31245/helm-charts/releases/download/AGH2-helm-0.4.5/AGH2-helm-0.4.5.tgz
+    version: 0.4.5
   helm-charts:
   - apiVersion: v1
     appVersion: 1.0.4
@@ -82,4 +93,4 @@ entries:
     urls:
     - https://github.com/ray31245/helm-charts/releases/download/helm-charts-0.0.3/helm-charts-0.0.3.tgz
     version: 0.0.3
-generated: "2022-03-11T08:57:56.578836844Z"
+generated: "2022-03-11T09:20:12.924009666Z"
